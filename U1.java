@@ -12,8 +12,12 @@ public static int version = 1;
     }
     String str = "Madam";
     int i=0,j=str.length();
-    while(i<j){
-        if(str.charAt(i)!=str.charAt(j)) System.out.println("Not a pallindrome"); return;
-    } 
+    String strD = new String();
+    for(char c : str.toLowerCase().toCharArray()){
+        strD=c+strD;
+    }
+    for(;i<j;i++){
+        if(str.charAt(i)!=strD.charAt(i)) System.out.println("Not a pallindrome"); return;
+    }
     System.out.println("Is a pallindrome");
 }
