@@ -12,10 +12,10 @@ public static int version = 1;
     }
     String str = "Madam";
     int i=0,j=str.length()-1;
-    Stack<Character> st = new Stack<>();
-    for(char c : str.toLowerCase().toCharArray()){st.add(c);}
-    for(;i<j;i++){
-        if(st.pop() != str.charAt(i)){System.out.println("Not a pallindrome"); return;}
+    Deque<Character> dq = new LinkedList<>();
+    for(char c : str.toLowerCase().toCharArray()){dq.add(c);}
+    if(!dq.empty()){
+        if(dq.removeFirst().equals(dq.removeLast())){System.out.println("Not a pallindrome"); return;}
     }
     System.out.println("Is a pallindrome");
 }
