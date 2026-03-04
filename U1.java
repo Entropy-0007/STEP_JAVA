@@ -10,4 +10,10 @@ public static int version = 1;
         }
         System.out.println("System initialized successfully");
     }
+    String str = "Madam";
+    int i=0,j=str.length();
+    while(i<j){
+        if(str.charAt(i)!=str.charAt(j)) System.out.println("Not a pallindrome"); return;
+    } 
+    System.out.println("Is a pallindrome");
 }
