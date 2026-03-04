@@ -11,13 +11,12 @@ public static int version = 1;
         System.out.println("System initialized successfully");
     }
     String str = "Madam";
-    int i=0,j=str.length();
-    String strD = new String();
-    for(char c : str.toLowerCase().toCharArray()){
-        strD=c+strD;
-    }
-    for(;i<j;i++){
-        if(str.charAt(i)!=strD.charAt(i)) System.out.println("Not a pallindrome"); return;
+    int i=0,j=str.length()-1;
+    char[] strD = str.toCharArray();
+    while(i<j){
+        if(strD[i]!=strD[j]) {System.out.println("Is not a pallindrome"); return;}
+        i++;j--;
     }
     System.out.println("Is a pallindrome");
 }
+    
