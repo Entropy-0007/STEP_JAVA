@@ -12,10 +12,17 @@ public static int version = 1;
     }
     String str = "Madam";
     int i=0,j=str.length()-1;
-    Deque<Character> dq = new LinkedList<>();
-    for(char c : str.toLowerCase().toCharArray()){dq.add(c);}
-    if(!dq.empty()){
-        if(dq.removeFirst().equals(dq.removeLast())){System.out.println("Not a pallindrome"); return;}
+    // Iterator<Character> ls = new LinkedList<>(str.chars().mapToObj(c->(char)c).toList()).iterator();
+    List<Character> ls = new LinkedList<>(str.chars().mapToObj(c->(char)c).toList());
+    //Iterator<Character> f = ls.iterator(); Iterator<Character> s = ls.iterator();
+    int f=0,s=0;
+    while(f<ls.size() && f+1<ls.size()){
+        f+=2;s=1;
+    }
+    Collections.reverse(ls.subList(s, ls.size()));
+    int mid =s;f=0;
+    while(f<mid && s<ls.size()){
+        if(ls.get(s)!=ls.get(f)){System.out.println("Not a pallindrome"); return;}
     }
     System.out.println("Is a pallindrome");
 }
