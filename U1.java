@@ -1,4 +1,6 @@
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 class U1{
 public static int version = 1;
     public static void main(String[] args){
@@ -10,14 +12,17 @@ public static int version = 1;
         }
         System.out.println("System initialized successfully");
         String str = "Madam";
-        System.out.printf("It %s a pallindrome", construct(str, 0, str.length()-1)?"is":"is not");
-    }
-    public static boolean construct(String in, int l, int r){
-        if(l>=r){
-            return true;
+
+        str = str.replaceAll("\s", "");
+        str = str.toLowerCase();
+
+        int l=0, r=str.length()-1;
+        while(l<=r){
+            if(str.charAt(l)!=str.charAt(r)){System.out.println("Is not a pallindrome"); return;}
         }
-        if(in.charAt(l) != in.charAt(r)) return false;
-        return construct(in, ++l, --r);
+        System.out.println("Is a pallindrome");
+
+
     }
 }
     
