@@ -4,11 +4,11 @@ public class U1{
     static interface PallindromeChecker{
         public static String preProcess(String x){
             String y = x.replaceAll("\\s", "");
-            y = x.toLowerCase();
+            y = y.toLowerCase();
             return y;
         }
         public default boolean check(char[] input){
-            for(int l=0, r= input.length; l<r; l++,r--){
+            for(int l=0, r= input.length-1; l<r; l++,r--){
             if(input[l]!=input[r]){return false;}
             }
             return true;
@@ -49,7 +49,6 @@ public class U1{
         }
         @Override
         public boolean check(char[] input){
-            int i=0,j=input.length-1;
             Deque<Character> dq = new LinkedList<>();
             for(char c : input){dq.add(c);}
             while(dq.size()>1){
@@ -61,6 +60,19 @@ public class U1{
             PallindromeChecker.super.result(check(input), original, input);
         }
     }
+
+    @FunctionalInterface
+    interface Strategy{
+        boolean check();
+    }
+
+    static void runTime(String strategy, Strategy algo){
+        long s,e;
+        s = System.nanoTime();
+        boolean res = algo.check();
+        e = System.nanoTime();
+        System.out.printf("%s : Time = %d%n", strategy, e-s);
+    }
     public static void main(String[] args){
         try {
             System.out.println("Welcome to Palindrome Vhecker Management System");
@@ -71,7 +83,7 @@ public class U1{
         System.out.println("System initialized successfully");
         String s = "Madam";
         PallindromeChecker service;
-        char choise; choise = new Scanner(System.in).next().toLowerCase().charAt(0);
+        /*char choise; choise = new Scanner(System.in).next().toLowerCase().charAt(0);
         switch(choise){
             case 's':
                 service = new StackCheck(s);
@@ -93,6 +105,9 @@ public class U1{
                 };
                 break;
         }
-        service.printResult();
+        service.printResult();*/
+        runTime("DEFAULT", ()-> new PallindromeChecker(){public void printResult(){}}.check(PallindromeChecker.preProcess(s).toCharArray()));
+        runTime("Stack", () -> new StackCheck(s).check(PallindromeChecker.preProcess(s).toCharArray()));
+        runTime("Dqueu", () -> new DqueueCheck(s).check(PallindromeChecker.preProcess(s).toCharArray()));     
     }  
 }
