@@ -1,13 +1,20 @@
 package Main.HotelBookingManagementSystem;
 
-import java.util.Arrays;
-import java.util.Iterator;
+import Main.HotelBookingManagementSystem.hotelBookingApp.RoomType;
+
+import java.util.*;
 
 public class hotelBookingApp {
 	static int VERSION;
 	static String GREETINGS;
 	static int availability[] = {3, 6, 2}; // in order SingleRoom, DoubleRoom, SuitRoom
+	public enum RoomType{
+		SINGLE{@Override public Room createRoom(){return new SingleRoom();}},
+		DOUBLE{@Override public Room createRoom(){return new DoubleRoom();}},
+		SUIT{@Override public Room createRoom(){return new SuitRoom();}};
 
+		public abstract Room createRoom();
+	} 
 	static{
 		try{
 			VERSION =2;
@@ -25,30 +32,29 @@ public class hotelBookingApp {
 	}
 
 	public static void main(String[] args) {
-		Room rooms[] = {new SingleRoom(), 
-						new DoubleRoom(),
-						new SuitRoom()};
-		Iterator<Integer> availableRooms = Arrays.stream(availability).boxed().iterator();
+		RoomInventory inventory = new RoomInventory();
 
-		for(Room r : rooms){
-			if(availableRooms.hasNext()) r.displayRoomDetails(availableRooms.next());
-
+		for (RoomType type : RoomType.values()) {
+			type.createRoom().displayRoomDetails(inventory.getRoomAvailability().get(type));
 			System.out.println();
 		}
+
+
 	}
 }
 
 abstract class Room{
-	protected int noOfBeds, size;
+	protected int noOfBeds;
+	protected int size;
 	protected double pricePerNight;
 
-	public Room(int nOb, int s, double ppN){
+	Room(int nOb, int s, double ppN){
 		this.noOfBeds = nOb;
 		this.size = s;
 		this.pricePerNight = ppN;
 	}
 
-	public abstract String getRoomName();
+	public abstract RoomType getRoomName();
 	public void displayRoomDetails(int avail){
 		System.out.println(getRoomName());
 		System.out.println("Beds: "+ noOfBeds);
@@ -62,17 +68,34 @@ abstract class Room{
 class SingleRoom extends Room{
 	public SingleRoom(){super(1, 250, 1500.0);}
 	@Override 
-	public String getRoomName(){return "SingleRoom";}
+	public RoomType getRoomName(){return RoomType.SINGLE;}
 }
 
 class DoubleRoom extends Room{
 	public DoubleRoom(){super(2, 400, 2500.0);}
 	@Override 
-	public String getRoomName(){return "DoubleRoom";}
+	public RoomType getRoomName(){return RoomType.DOUBLE;}
 }
 
 class SuitRoom extends Room{
 	public SuitRoom(){super(3, 750, 5000.0);}
 	@Override 
-	public String getRoomName(){return "SuitRoom";}
+	public RoomType getRoomName(){return RoomType.SUIT;}
+}
+
+class RoomInventory{
+	private Map<RoomType, Integer> roomAvailability;
+
+	public RoomInventory(){
+		initializeInventory();
+	}
+	private void initializeInventory(){
+		roomAvailability = new HashMap<>();
+		updateAvailability(RoomType.SINGLE, 10);
+		updateAvailability(RoomType.DOUBLE, 5);
+		updateAvailability(RoomType.SUIT, 6);
+	}
+	public Map<RoomType, Integer> getRoomAvailability(){return roomAvailability;}
+	public void updateAvailability(RoomType type, int count){roomAvailability.put(type, count);}
+
 }
