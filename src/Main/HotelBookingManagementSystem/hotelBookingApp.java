@@ -17,7 +17,7 @@ public class hotelBookingApp {
 	} 
 	static{
 		try{
-			VERSION =2;
+			VERSION =4;
 			GREETINGS = "Welcome to Hotel Booking Management Application";
 			System.out.println();
 			System.out.println("Initialized Successfuly");
@@ -33,13 +33,8 @@ public class hotelBookingApp {
 
 	public static void main(String[] args) {
 		RoomInventory inventory = new RoomInventory();
-
-		for (RoomType type : RoomType.values()) {
-			type.createRoom().displayRoomDetails(inventory.getRoomAvailability().get(type));
-			System.out.println();
-		}
-
-
+		RoomSearchService searchService = new RoomSearchService();
+		searchService.searchAvailable(inventory);
 	}
 }
 
@@ -56,11 +51,13 @@ abstract class Room{
 
 	public abstract RoomType getRoomName();
 	public void displayRoomDetails(int avail){
+		System.out.println();
 		System.out.println(getRoomName());
 		System.out.println("Beds: "+ noOfBeds);
 		System.out.println("Size: "+ size);
 		System.out.println("Price per Night: "+ pricePerNight);
 		System.out.println("Available: "+ avail);
+		System.out.println();
 	}
 
 }
@@ -85,17 +82,45 @@ class SuitRoom extends Room{
 
 class RoomInventory{
 	private Map<RoomType, Integer> roomAvailability;
+	private Map<RoomType, Integer> maxRooms;
+	private Map<RoomType, Room> roomDetails;
 
 	public RoomInventory(){
+		roomDetails = new HashMap<>();
+		maxRooms = new HashMap<>();
+
+		for(RoomType type: RoomType.values()){
+			roomDetails.put(type, type.createRoom());
+		}
+
 		initializeInventory();
 	}
 	private void initializeInventory(){
 		roomAvailability = new HashMap<>();
-		updateAvailability(RoomType.SINGLE, 10);
-		updateAvailability(RoomType.DOUBLE, 5);
-		updateAvailability(RoomType.SUIT, 6);
-	}
-	public Map<RoomType, Integer> getRoomAvailability(){return roomAvailability;}
-	public void updateAvailability(RoomType type, int count){roomAvailability.put(type, count);}
 
+		updateMax(RoomType.SINGLE, 10);
+		updateMax(RoomType.DOUBLE, 5);
+		updateMax(RoomType.SUIT, 6);
+
+		for(RoomType type: RoomType.values()){
+			roomAvailability.put(type, maxRooms.get(type));
+		}
+	}
+	public Map<RoomType, Integer> getRoomAvailability(){return Collections.unmodifiableMap(roomAvailability);}
+	public Map<RoomType, Room> getRoomDetails(){return Collections.unmodifiableMap(roomDetails);}
+
+	protected void updateAvailability(RoomType type, int delta){roomAvailability.compute(type, (room, oldValue)-> Math.clamp(((oldValue == null ? 0 : oldValue) + delta), 0, maxRooms.get(room)));}
+	protected void updateMax(RoomType type, int count){maxRooms.put(type, count);}
+
+}
+
+class RoomSearchService{
+	public void searchAvailable(RoomInventory inventory){
+		Arrays.stream(RoomType.values())
+			.map(room -> Map.entry(room, inventory.getRoomAvailability().get(room)))
+			.filter(entry -> entry.getValue() > 0)
+			.forEach(entry -> inventory.getRoomDetails()
+				.get(entry.getKey())
+				.displayRoomDetails(entry.getValue()));
+	}
 }
